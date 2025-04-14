@@ -1,11 +1,9 @@
 package com.pawpasta.org.entity;
 
-
 import jakarta.persistence.*;
-
 import lombok.*;
-
 import java.time.LocalDateTime;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "Payments")
@@ -13,34 +11,35 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Payments {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    @Column(name = "Id")
+    private Integer id;
 
-    private double Distance;
+    @Column(name = "Distance", nullable = false)
+    private double distance;
 
-    @Column(nullable = false)
-    private String Source;
+    @Column(name = "Source", nullable = false)
+    private String source;
 
-    @Column(nullable = false)
+    @Column(name = "Destination", nullable = false)
     private String destination;
 
-    @Column(nullable = false, precision = 18, scale = 2)
-    private double amount;
+    @Column(name = "Amount", nullable = false, precision = 18, scale = 2)
+    private BigDecimal amount;
 
+    @Column(name = "Status", nullable = false)
     private String status;
 
+    @Column(name = "PaymentCode")
     private String paymentCode;
 
+    @Column(name = "PaymentDate")
     private LocalDateTime paymentDate;
 
-    @Column(nullable = false)
-    private LocalDateTime creatAt;
+    @Column(name = "CreatedAt", nullable = false)
+    private LocalDateTime createdAt;
 
-    @Column(nullable = false)
+    @Column(name = "UpdatedAt", nullable = false)
     private LocalDateTime updatedAt;
-
-
-
 }
