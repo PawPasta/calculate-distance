@@ -1,11 +1,12 @@
 import { useState } from "react";
+import axios from "axios";
 import OutlinedInput from '@mui/material/OutlinedInput';
 import { Button, Divider, ListItemIcon, ListItemText } from "@mui/material";
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import { IoLocationSharp } from "react-icons/io5";
-import './Distance_Page.css';  // Import file CSS
-import { getDistance } from 'geolib';  // Import geolib for distance calculation
+import './Distance_Page.css'; // Import file CSS
+import { getDistance } from 'geolib'; // Import geolib for distance calculation
 
 const NONIMATIM_BASE_URL = "https://nominatim.openstreetmap.org/search?";
 
@@ -16,7 +17,7 @@ export default function SearchBox(props) {
     const [distance, setDistance] = useState(null); // To store calculated distance
     const [isListVisible, setIsListVisible] = useState(true); // Trạng thái hiển thị danh sách
 
-    // Giả sử vị trí cố định là [10.7763897, 106.7011391] (Ví dụ: TP.HCM, Việt Nam)
+    // TP.HCM, Việt Nam
     const position = [10.7763897, 106.7011391];
 
     // Hàm xử lý tìm kiếm
@@ -38,7 +39,6 @@ export default function SearchBox(props) {
             .then((response) => response.text())
             .then((result) => {
                 const parsedResult = JSON.parse(result);
-                console.log(parsedResult);
                 setListPlace(parsedResult);  // Cập nhật danh sách địa điểm tìm thấy
                 setIsListVisible(true); // Hiển thị lại danh sách sau khi tìm kiếm
             })
@@ -72,6 +72,33 @@ export default function SearchBox(props) {
         setIsListVisible(false);
     };
 
+    // Hàm xử lý thanh toán (dummy function)
+    const handlePayment = () => {
+        const paymentData = {
+            distance: distance, // Khoảng cách
+            source: "TP.HCM",  // Nguồn cố định
+            destination: selectPosition?.display_name, // Đích đến
+        };
+
+        axios.post("http://localhost:8080/api/payment", paymentData, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+            .then((response) => {
+                const data = response.data;
+                if (data.success) {
+                    alert("Thanh toán thành công!");
+                } else {
+                    alert("Thanh toán thất bại!");
+                }
+            })
+            .catch((error) => {
+                console.error("Error during payment:", error);
+                alert("Có lỗi xảy ra trong quá trình thanh toán.");
+            });
+    };
+
     return (
         <>
             <div className="search-box-container">
@@ -80,6 +107,7 @@ export default function SearchBox(props) {
                         <OutlinedInput
                             className="search-box-input"
                             style={{ width: '100%' }}
+                            placeholder="Nhập địa điểm cần tìm..."
                             value={searchText}
                             onChange={(event) => {
                                 setSearchText(event.target.value);
@@ -88,11 +116,12 @@ export default function SearchBox(props) {
                     </div>
                     <div className="search-box-button-container">
                         <Button variant="contained" color="primary" onClick={handleSearch}>
-                            Search
+                            Tìm kiếm
                         </Button>
                     </div>
                 </div>
-                {isListVisible && (
+
+                {isListVisible && listPlace.length > 0 && (
                     <List component="nav" aria-label="main mailbox folders" className="search-box-list">
                         {
                             listPlace.map((item) => {
@@ -113,9 +142,16 @@ export default function SearchBox(props) {
                         }
                     </List>
                 )}
+
                 {distance !== null && (
                     <div className="distance-result">
-                        <h3>Khoảng cách địa điểm từ nơi bạn nhập đến Trung Tâm Thành Phố Hồ Chí Minh Là: {distance} meters</h3>
+                        <h3>Khoảng cách từ địa điểm bạn nhập đến Trung tâm TP.HCM: {distance} mét</h3>
+                        <Button
+                            variant="contained"
+                            color="secondary"
+                            onClick={handlePayment}>
+                            Thanh toán
+                        </Button>
                     </div>
                 )}
             </div>

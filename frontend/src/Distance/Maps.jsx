@@ -5,12 +5,11 @@ import L from "leaflet";
 import { renderToStaticMarkup } from "react-dom/server";
 import { useEffect } from "react";
 import "./Distance_Page.css";
+import {MAPTILER_KEY} from "../config/MapConfig.js";
 
 
-const apiKey = import.meta.env.VITE_MAPTILER_KEY;
+const apiKey = MAPTILER_KEY;
 const position = [10.7763897, 106.7011391];// Tọa độ mặc định của thành phố hồ chí minh nha ní
-
-
 
 // Cái này dùng để biến các icon trong thư viện react thành các icon trong leaflet cho phần giao diện địa chỉ trên map
 export function CustomIcon() {
